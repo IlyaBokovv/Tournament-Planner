@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TournamentPlanner.API.Data.Repositories;
 using TournamentPlanner.API.Data.Sql.Models;
+using TournamentPlanner.Data.IRepository;
 using TournamentPlanner.DTOs;
+using TournamentPlanner.Exceptions;
+using TournamentPlanner.Services.Exceptions;
+using TournamentPlanner.Services.Interface;
 
 namespace TournamentPlanner.API.Services
 {
@@ -15,8 +18,13 @@ namespace TournamentPlanner.API.Services
             _matchRepository = matchRepository;
         }
 
-        public async Task<MatchDTO> CreateMatchAsync(MatchForCreationDto match)
+        public async Task<MatchDTO> CreateMatchAsync(MatchForCreateDto match)
         {
+            var matchesCount = await _matchRepository.GetMatchesCountAsync();
+            if(matchesCount > 32)
+            {
+                throw new MaxMatchesCountReachedException("Matches count cannot be more than 32");
+            }
             var matchEntity = new Match()
             {
                 RoundNumber = match.RoundNumber,
@@ -36,7 +44,14 @@ namespace TournamentPlanner.API.Services
         {
             var match = _matchRepository.FindByCondition(x => x.Id == id).FirstOrDefault();
             if (match is not null)
+            {
                 await _matchRepository.Delete(match);
+
+            }
+            else
+            {
+                throw new MatchNotFoundIdRequestExeption("Match with given Id does not exists");
+            }
         }
 
         public async Task GenerateMatchesForNextRound()
@@ -69,14 +84,17 @@ namespace TournamentPlanner.API.Services
             return null;
         }
 
-        public async Task<IActionResult> UpdateMatchAsync(int id, MatchForUpdateDTO match)
+        public async Task UpdateMatchAsync(int id, MatchForUpdateDTO match)
         {
             var currentMatch = _matchRepository.FindByCondition(x => x.Id == id).FirstOrDefault();
             if (currentMatch is not null)
             {
                 _matchRepository.Update(currentMatch);
             }
-            throw new InvalidOperationException();
+            else
+            {
+                throw new MatchNotFoundIdRequestExeption("Match with given Id does not exists");
+            }
         }
     }
 }

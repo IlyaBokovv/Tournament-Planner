@@ -2,6 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using TournamentPlanner.API.Data;
 using TournamentPlanner.API.Data.Repositories;
 using TournamentPlanner.API.Services;
+using TournamentPlanner.Data.IRepository;
+using TournamentPlanner.Middleware;
+using TournamentPlanner.Services.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +27,7 @@ builder.Services.AddScoped<IMatchService, MatchService>();
 
 
 var app = builder.Build();
+app.UseMiddleware<ErrorHandlerMiddleware>();
 //app.UseExceptionHandler("/error");
 if (app.Environment.IsDevelopment())
 {

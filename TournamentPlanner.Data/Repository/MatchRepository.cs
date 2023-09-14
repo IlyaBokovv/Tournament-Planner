@@ -1,7 +1,7 @@
-﻿using Contracts;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Repository;
 using TournamentPlanner.API.Data.Sql.Models;
+using TournamentPlanner.Data.IRepository;
 
 namespace TournamentPlanner.API.Data.Repositories
 {
@@ -88,6 +88,11 @@ namespace TournamentPlanner.API.Data.Repositories
                     RoundNumber = nextRound
                 });
             }
+        }
+
+        public async Task<int> GetMatchesCountAsync()
+        {
+            return await _db.Matches.CountAsync();
         }
     }
 }

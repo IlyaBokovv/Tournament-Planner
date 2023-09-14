@@ -1,8 +1,7 @@
-﻿using Contracts;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TournamentPlanner.API.Data.Sql.Models;
 
-namespace TournamentPlanner.API.Data.Repositories
+namespace TournamentPlanner.Data.IRepository
 {
     public interface IMatchRepository : IRepositoryBase<Match>
     {
@@ -10,5 +9,6 @@ namespace TournamentPlanner.API.Data.Repositories
         Task<IEnumerable<Match>> GetIncompleteMatchesAsync();
         Task GenerateMatchesForNextRoundAsync();
         Task AddSubsequentRound(DbSet<Match> matches);
+        Task<int> GetMatchesCountAsync();
     }
 }

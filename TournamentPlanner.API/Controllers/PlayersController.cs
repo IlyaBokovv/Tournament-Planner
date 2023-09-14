@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TournamentPlanner.API.Data;
-using TournamentPlanner.API.Services;
+using TournamentPlanner.Services.Interface;
 
 namespace TournamentPlanner.API.Controllers
 {

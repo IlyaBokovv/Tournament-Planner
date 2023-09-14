@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TournamentPlanner.Data.IRepository;
 
 namespace TournamentPlanner.API.Data.Repositories
 {

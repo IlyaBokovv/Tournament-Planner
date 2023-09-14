@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TournamentPlanner.API.Data;
-using TournamentPlanner.API.Data.Sql.Models;
-using TournamentPlanner.API.Services;
 using TournamentPlanner.DTOs;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using TournamentPlanner.Services.Interface;
 
 namespace TournamentPlanner.API.Controllers
 {
@@ -19,11 +15,37 @@ namespace TournamentPlanner.API.Controllers
             _matchService = matchService;
         }
         [HttpGet]
+        public async Task<ActionResult<IEnumerable<MatchDTO>>> GetMatches()
+        {
+            var matches = await _matchService.GetAllMatchesAsync();
+            return Ok(matches);
+        }
+
+        [HttpGet]
         [Route("open")]
-        public async Task<ActionResult<IEnumerable<Match>>> GetIncompleteMatches()
+        public async Task<ActionResult<IEnumerable<MatchDTO>>> GetIncompleteMatches()
         {
             var matches = await _matchService.GetIncompleteMatches();
             return Ok(matches);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<MatchDTO>> GetMatch(int id)
+        {
+            var match = await _matchService.GetMatchByIdAsync(id);
+            var matchDTO = new MatchDTO(match.Id, match.RoundNumber);
+
+            return Ok(matchDTO);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<MatchDTO>> CreateMatch(MatchForCreateDto match)
+        {
+            if (match is null)
+                return BadRequest();
+
+            var createdCompany = await _matchService.CreateMatchAsync(match);
+            return CreatedAtAction(nameof(GetMatch), new { id = createdCompany.Id }, createdCompany);
         }
 
         [HttpPost]
@@ -32,37 +54,7 @@ namespace TournamentPlanner.API.Controllers
         {
             await _matchService.GenerateMatchesForNextRound();
         }
-        ь
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Match>>> GetMatches()
-        {
-            var matches = await _matchService.GetAllMatchesAsync();
-            return Ok(matches);
-        }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Match>> GetMatch(int id)
-        {
-            var match = await _matchService.GetMatchByIdAsync(id);
-
-            if (match == null)
-            {
-                return NotFound();
-            }
-            var matchDTO = new MatchDTO(match.Id, match.RoundNumber);
-
-            return Ok(matchDTO);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<Match>> CreateMatch(MatchForCreationDto match)
-        {
-            if (match is null)
-                return BadRequest();
-
-            var createdCompany = await _matchService.CreateMatchAsync(match);
-            return CreatedAtAction(nameof(GetMatch), new { id = createdCompany.Id }, createdCompany);
-        }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMatch(int id, MatchForUpdateDTO match)

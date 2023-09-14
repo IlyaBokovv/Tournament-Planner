@@ -1,7 +1,7 @@
-﻿using Contracts;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using TournamentPlanner.API.Data;
+using TournamentPlanner.Data.IRepository;
 
 namespace Repository;
 

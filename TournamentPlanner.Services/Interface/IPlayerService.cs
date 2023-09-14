@@ -1,6 +1,6 @@
 ﻿using TournamentPlanner.API.Data;
 
-namespace TournamentPlanner.API.Services
+namespace TournamentPlanner.Services.Interface
 {
     public interface IPlayerService
     {

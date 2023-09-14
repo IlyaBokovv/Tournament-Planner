@@ -76,7 +76,7 @@ namespace TournamentPlanner.API.Data
         public async Task DeleteEverything()
         {
             using var transaction = await Database.BeginTransactionAsync();
-            await Database.ExecuteSqlRawAsync("DELETE FROM dbo.Matches");
+            //await Database.ExecuteSqlRawAsync("DELETE FROM dbo.Matches");
             await Database.ExecuteSqlRawAsync("DELETE FROM dbo.Players");
             await transaction.CommitAsync();
         }
